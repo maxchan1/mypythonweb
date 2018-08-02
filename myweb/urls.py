@@ -20,4 +20,6 @@ from comdb import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('index/', views.index),
+    path('testdb/', views.testdb),
+    path('search/', views.searchtext),
 ]

@@ -3,14 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <title>网页新页</title>
+<link href="../static/css/style.css" rel="stylesheet" type="text/css" media="all"/>
+<!-- Custom Theme files -->
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 </head>
 <body>
-    <p style="color:red">欢迎来到新的网页！</p>
-    <form action="/index/",method="post">
-        <input type="text" name="username"/>
-        <input type="password" name="password"/>
-        <input type="submit" vaule="提交"/>
-    </form>
-    <script src="/statice/js/jquery-3.2.1.js"/>
+<div class="login">
+	<h2>自动化管理系统</h2>
+	<div class="login-top">
+		<h1>登录账号</h1>
+		<form>
+            {% csrf_token %}
+			<input type="text" placeholder="用户名" onfocus="this.placeholder = '';" onblur="if (this.placeholder == '') {this.placeholder = '用户名';}">
+			<input type="password" placeholder="密码" onfocus="this.placeholder = '';" onblur="if (this.placeholder == '') {this.placeholder = '密码';}">
+	    <div class="forgot">
+	    	<a href="#">忘记密码？</a>
+	    	<input type="submit" value="登录" >
+	    </div>
+        </form>
+	</div>
+	<div class="login-bottom">
+		<h3>新用户 &nbsp;<a href="#">注册</a></h3>
+	</div>
+</div>
+
 </body>
 </html>
