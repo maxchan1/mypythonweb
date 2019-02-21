@@ -14,20 +14,27 @@
 	<h2>自动化管理系统</h2>
 	<div class="login-top">
 		<h1>登录账号</h1>
-		<form action="" method="post">
+		<form action="/login/" method="post">
             {%csrf_token%}
-			<input type="text" placeholder="用户名" onfocus="this.placeholder = '';" onblur="if (this.placeholder == '') {this.placeholder = '用户名';}">
-			<input type="password" placeholder="密码" onfocus="this.placeholder = '';" onblur="if (this.placeholder == '') {this.placeholder = '密码';}">
+			<input type="text" placeholder="用户名" name="username" onfocus="this.placeholder = '';" onclick="clearinfo()" onblur="if (this.placeholder == '') {this.placeholder = '用户名';}" autocomplete="off">
+			<input type="password" placeholder="密码" name="password" onfocus="this.placeholder = '';" onclick="clearinfo()" onblur="if (this.placeholder == '') {this.placeholder = '密码';}">
 	    <div class="forgot">
 	    	<a href="#">忘记密码？</a>
 	    	<input type="submit" value="登录" >
 	    </div>
+        <span>{{loginfo}}</span>
         </form>
 	</div>
 	<div class="login-bottom">
 		<h3>新用户 &nbsp;<a href="#">注册</a></h3>
 	</div>
-</div>
 
+</div>
+<script>
+    function clearinfo(){
+        document.getElementsByTagName("span")[0].innerHTML = "";
+    }
+
+</script>
 </body>
 </html>

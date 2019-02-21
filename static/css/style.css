@@ -97,6 +97,13 @@ body{
   border-right: 2px solid #F45B4B;
   padding: 0px 7px 0px 0px;
 }
+.forgot~span{
+  font-size: 13px;
+  font-weight: 500;
+  color: #F45B4B;
+  display: inline-block;
+  padding: 0px 7px 0px 0px;
+}
 .forgot  a:hover{
   color: #818181;
 }
