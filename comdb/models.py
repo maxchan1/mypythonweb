@@ -12,7 +12,7 @@ class userinfo(models.Model):
 
 class question(models.Model):
     question_text = models.CharField(max_length=200)
-    pub_date = models.DateTimeField('发布日期')
+    pub_date = models.DateTimeField('发布日期',default=timezone.now)
     def was_published_recently(self):
         now = timezone.now()
         return now - datetime.timedelta(days=1) <= self.pub_date <= now
