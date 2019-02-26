@@ -1,5 +1,6 @@
 from django.shortcuts import render,redirect
 from login.models import User
+from login.forms import UserForm
 
 # Create your views here.
 
@@ -10,13 +11,11 @@ def index(request):
 
 def login(request):
     if request.method == "POST":
-        username = request.POST.get("username",None)
-        password = request.POST.get("password",None)
-        if username and password:
-            username = username.strip()
-            # 用户名字符合法性验证
-            # 密码长度验证
-            # 更多的其它验证.....
+        login_form = UserForm(request.POST)
+        message = "请检查填写的内容！"
+        if login_form.is_valid():
+            username = login_form.cleaned_data["username"]
+            password = login_form.cleaned_data["password"]
             try:
                 user = User.objects.get(name=username)
                 if user.password == password:
@@ -25,8 +24,9 @@ def login(request):
                     message = "密码不正确!"
             except:
                 message = "用户名不存在!"
-        return render(request,'login/login.html',{'message':message})
-    return render(request, 'login/login.html')
+        return render(request,'login/login.html',locals())
+    login_form = UserForm()
+    return render(request, 'login/login.html',locals())
 
 
 def register(request):
