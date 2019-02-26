@@ -8,7 +8,7 @@ from .models import userinfo
 # Create your views here.
 
 def index(request):
-    return render(request,"index.html")
+    return render(request, "indexnew.html")
 
 def mylogin(request):
     if request.method == "POST":
@@ -19,7 +19,7 @@ def mylogin(request):
             login(request,user)
             return render(request,"post.html")
         else:
-            return render(request,"index.html",{"loginfo":"用户名或密码错误"})
+            return render(request, "indexnew.html", {"loginfo": "用户名或密码错误"})
 
 def testdb(request):
     '''test1 = userinfo(name="mike",email="43533@163.com",addr="下胡同城北村")
