@@ -1,7 +1,8 @@
 from django.shortcuts import render,redirect
-from login.models import User
+from . import models
 from login.forms import UserForm,RegisterForm
-import hashlib
+import hashlib,datetime
+from django.conf import  settings
 
 # Create your views here.
 
@@ -27,7 +28,10 @@ def login(request):
             username = login_form.cleaned_data["username"]
             password = login_form.cleaned_data["password"]
             try:
-                user = User.objects.get(name=username)
+                user = models.User.objects.get(name=username)
+                if not user.has_confirmed:
+                    message = '该用户邮件还没有确认！'
+                    return render(request,'login/login.html',locals())
                 if user.password == hash_code(password):
                     request.session['is_login'] = True
                     request.session['user_id'] = user.id
@@ -58,15 +62,17 @@ def register(request):
                 message = "两次输入的密码不正确！"
                 return render(request,'login/register.html',locals())
             else:
-                same_name = User.objects.filter(name=username)
+                same_name = models.User.objects.filter(name=username)
                 if same_name:
                     message = "用户名已经被注册，请重新输入！"
                     return render(request,'login/register.html',locals())
-                same_email = User.objects.filter(email=email)
+                same_email = models.User.objects.filter(email=email)
                 if same_email:
                     message = "邮箱已经被注册，请重新输入！"
                     return render(request,'login/register.html',locals())
-                User.objects.create(name=username,password=hash_code(password1),email=email,sex=sex)
+                new_user = models.User.objects.create(name=username,password=hash_code(password1),email=email,sex=sex)
+                code = make_confirm_string(new_user)
+                send_mail(email, code)
                 return redirect('/login/')
         return render(request, 'login/register.html', locals())
     register_form = RegisterForm()
@@ -77,3 +83,47 @@ def logout(request):
         return redirect('/index/')
     request.session.flush()
     return redirect("/index/")
+
+def make_confirm_string(user):
+    now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    code = hash_code(user.name,now)
+    models.ConfirmString.objects.create(code=code,user=user)
+    return code
+
+def send_mail(email,code):
+    from django.core.mail import EmailMultiAlternatives
+
+    subject = '注册确认邮件'
+
+    text_content = '''感谢注册，如果你看到这条消息，说明你的邮箱服务器不提供HTML链接功能，请联系管理员！'''
+
+    html_content = '''<p>感谢注册<a href="http://{}/confirm/?code={}" target=blank>www.myweb.com</a></p>
+                        <p>请点击站点链接完成注册确认！</p>
+                        <p>此链接有效期为{}天！</p>
+                        '''.format('127.0.0.1:8000', code, settings.CONFIRM_DAYS)
+
+    msg = EmailMultiAlternatives(subject, text_content, settings.EMAIL_HOST_USER, [email])
+    msg.attach_alternative(html_content, "text/html")
+    msg.send()
+
+def user_confirm(request):
+    code = request.GET.get('code',None)
+    message = ''
+    try:
+        confirm = models.ConfirmString.objects.get(code=code)
+    except:
+        message = '无效的确认请求'
+        return render(request,'login/confirm.html',locals())
+
+    c_time = confirm.c_time
+    now = datetime.datetime.now()
+    if now > c_time + datetime.timedelta(settings.CONFIRM_DAYS):
+        confirm.user.delete()
+        message = '您的邮件已经过期，请重新注册！'
+        return render(request,'login/confirm.html',locals())
+    else:
+        confirm.user.has_confirmed = True
+        confirm.user.save()
+        confirm.delete()
+        message = '感谢确认，欢迎使用账户登录！'
+        return render(request,'login/confirm.html',locals())
