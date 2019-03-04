@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'comdb',
     'login',
     'captcha',
+    'assets',
 ]
 
 MIDDLEWARE = [
