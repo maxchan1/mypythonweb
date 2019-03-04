@@ -25,16 +25,16 @@ class Asset(models.Model):
     sn = models.CharField('资产序列号',max_length=128,unique=True)
     business_unit = models.ForeignKey('BusinessUnit',null=True,blank=True,verbose_name='所属业务线',on_delete=models.CASCADE)
     status = models.SmallIntegerField(choices=asset_status,default=0,verbose_name='设备状态')
-    manufacture = models.ForeignKey('Manufacturer',null=True,blank=True,verbose_name='制造商')
+    manufacture = models.ForeignKey('Manufacturer',null=True,blank=True,verbose_name='制造商',on_delete=models.CASCADE)
     manage_ip = models.GenericIPAddressField('管理IP',null=True,blank=True)
     tags = models.ManyToManyField('Tag',blank=True,verbose_name='标签')
-    admin = models.ForeignKey(User,blank=True,null=True,verbose_name='资产管理员',related_name='admin')
-    idc = models.ForeignKey('IDC',null=True,blank=True,verbose_name='所在机房')
-    contract = models.ForeignKey('Contract',null=True,blank=True,verbose_name='合同')
+    admin = models.ForeignKey(User,blank=True,null=True,verbose_name='资产管理员',related_name='admin',on_delete=models.SET_NULL)
+    idc = models.ForeignKey('IDC',null=True,blank=True,verbose_name='所在机房',on_delete=models.SET_NULL)
+    contract = models.ForeignKey('Contract',null=True,blank=True,verbose_name='合同',on_delete=models.SET_NULL)
     purchase_day = models.DateField('购买日期',null=True,blank=True)
     expire_day = models.DateField('过保日期',null=True,blank=True)
     price = models.FloatField('价格',null=True,blank=True)
-    approved_by = models.ForeignKey(User,null=True,blank=True,verbose_name='批准人',related_name='approved_by')
+    approved_by = models.ForeignKey(User,null=True,blank=True,verbose_name='批准人',related_name='approved_by',on_delete=models.SET_NULL)
     memo = models.TextField('备注',null=True,blank=True)
     c_time = models.DateTimeField('批准日期',auto_now_add=True)
     m_time = models.DateTimeField("更新日期",auto_now=True)
@@ -63,7 +63,7 @@ class Server(models.Model):
     sub_asset_type = models.SmallIntegerField('服务器类型',choices=sub_asset_type_choice,default=0)
     created_by = models.CharField(choices=created_by_choice, max_length=32, default='auto', verbose_name="添加方式")
     hosted_on = models.ForeignKey('self', related_name='hosted_on_server',
-                                  blank=True, null=True, verbose_name="宿主机")  # 虚拟机专用字段
+                                  blank=True, null=True, verbose_name="宿主机",on_delete=models.SET_NULL)  # 虚拟机专用字段
     model = models.CharField('服务器型号',max_length=128, null=True, blank=True)
     raid_type = models.CharField('Raid类型',max_length=512, blank=True, null=True)
 
@@ -86,7 +86,7 @@ class SecurityDevice(models.Model):
         (4, '运维审计系统'),
     )
 
-    asset = models.OneToOneField(Asset)
+    asset = models.OneToOneField(Asset,on_delete=models.CASCADE)
     sub_asset_type = models.SmallIntegerField(choices=sub_asset_type_choice, default=0, verbose_name="安全设备类型")
 
     def __str__(self):
@@ -104,7 +104,7 @@ class StorageDevice(models.Model):
         (4, '磁带机'),
     )
 
-    asset = models.OneToOneField(Asset)
+    asset = models.OneToOneField(Asset,on_delete=models.CASCADE)
     sub_asset_type = models.SmallIntegerField(choices=sub_asset_type_choice, default=0, verbose_name="存储设备类型")
 
     def __str__(self):
@@ -122,7 +122,7 @@ class NetworkDevice(models.Model):
         (4, 'VPN设备'),
     )
 
-    asset = models.OneToOneField(Asset)
+    asset = models.OneToOneField(Asset,on_delete=models.CASCADE)
     sub_asset_type = models.SmallIntegerField(choices=sub_asset_type_choice, default=0, verbose_name="网络设备类型")
 
     vlan_ip = models.GenericIPAddressField(blank=True, null=True, verbose_name="VLanIP")
@@ -185,7 +185,7 @@ class Manufacturer(models.Model):
 
 class BusinessUnit(models.Model):
 
-    parent_unit = models.ForeignKey('self', blank=True, null=True, related_name='parent_level')
+    parent_unit = models.ForeignKey('self', blank=True, null=True, related_name='parent_level',on_delete=models.CASCADE)
     name = models.CharField('业务线', max_length=64, unique=True)
     memo = models.CharField('备注', max_length=64, blank=True, null=True)
 
@@ -229,7 +229,7 @@ class Tag(models.Model):
 
 class CPU(models.Model):
 
-    asset = models.OneToOneField(Asset)  # 设备上的cpu肯定都是一样的，所以不需要建立多个cpu数据，一条就可以，因此使用一对一。
+    asset = models.OneToOneField(Asset,on_delete=models.CASCADE)  # 设备上的cpu肯定都是一样的，所以不需要建立多个cpu数据，一条就可以，因此使用一对一。
     cpu_model = models.CharField('CPU型号', max_length=128, blank=True, null=True)
     cpu_count = models.PositiveSmallIntegerField('物理CPU个数', default=1)
     cpu_core_count = models.PositiveSmallIntegerField('CPU核数', default=1)
@@ -243,7 +243,7 @@ class CPU(models.Model):
 
 class RAM(models.Model):
 
-    asset = models.ForeignKey(Asset)  # 只能通过外键关联Asset。否则不能同时关联服务器、网络设备等等。
+    asset = models.ForeignKey(Asset,on_delete=models.CASCADE)  # 只能通过外键关联Asset。否则不能同时关联服务器、网络设备等等。
     sn = models.CharField('SN号', max_length=128, blank=True, null=True)
     model = models.CharField('内存型号', max_length=128, blank=True, null=True)
     manufacturer = models.CharField('内存制造商', max_length=128, blank=True, null=True)
@@ -268,7 +268,7 @@ class Disk(models.Model):
         ('unknown', 'unknown'),
     )
 
-    asset = models.ForeignKey(Asset)
+    asset = models.ForeignKey(Asset,on_delete=models.CASCADE)
     sn = models.CharField('硬盘SN号', max_length=128)
     slot = models.CharField('所在插槽位', max_length=64, blank=True, null=True)
     model = models.CharField('磁盘型号', max_length=128, blank=True, null=True)
@@ -286,7 +286,7 @@ class Disk(models.Model):
 
 class NIC(models.Model):
 
-    asset = models.ForeignKey(Asset)  # 注意要用外键
+    asset = models.ForeignKey(Asset,on_delete=models.CASCADE)  # 注意要用外键
     name = models.CharField('网卡名称', max_length=64, blank=True, null=True)
     model = models.CharField('网卡型号', max_length=128)
     mac = models.CharField('MAC地址', max_length=64)  # 虚拟机有可能会出现同样的mac地址
