@@ -24,6 +24,10 @@ class User(models.Model):
         verbose_name_plural = "用户"
 
 class ConfirmString(models.Model):
+    """
+       Stores a single blog entry, related to :model:`login.User` and
+       :model:`auth.User`.
+       """
     code = models.CharField(max_length=256)
     user = models.OneToOneField(User,on_delete=models.DO_NOTHING)
     c_time = models.DateTimeField(auto_now_add=True)

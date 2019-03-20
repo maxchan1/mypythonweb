@@ -19,6 +19,7 @@ from login import views
 from django.conf.urls import url
 
 urlpatterns = [
+    re_path(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     path('admin/', admin.site.urls),
     path('comdb/',include(("comdb.urls"))),
     url(r'^index/', views.index),

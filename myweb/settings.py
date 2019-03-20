@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.admindocs',
     'comdb',
     'login',
     'captcha',
@@ -145,3 +146,9 @@ EMAIL_HOST_USER = '1432742571@qq.com'
 EMAIL_HOST_PASSWORD = 'ghrkzenaipinicdb'
 EMAIL_USE_TLS = False
 CONFIRM_DAYS = 7
+
+CAPTCHA_OUTPUT_FORMAT = u'%(image)s %(text_field)s %(hidden_field)s'
+CAPTCHA_CHALLENGE_FUNCT = 'captcha.helpers.random_num_char_challenge'
+CAPTCHA_LENGTH = 7
+CAPTCHA_FOREGROUND_COLOR = '#001134'
+CAPTCHA_LETTER_ROTATION = (-35, 75) #图像倾斜幅度
