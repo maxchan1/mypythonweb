@@ -47,7 +47,7 @@ body {
 /* Carousel base class */
 .carousel {
   height: 430px;
-  z-index: -1;
+  z-index: 20;
   float:left;
   width:936px;
   border-bottom-right-radius:10px;
