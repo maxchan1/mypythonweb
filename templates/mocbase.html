@@ -17,7 +17,6 @@
 
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <link href="{% static 'css/ie10-viewport-bug-workaround.css' %}" rel="stylesheet">
-    <link href="{% static 'css/menustyle.css' %}" rel="stylesheet">
     <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
     <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
     <script src="{% static 'js/ie-emulation-modes-warning.js' %}"></script>
@@ -132,101 +131,113 @@ function needDelay(elem, leftCorner, currMousePos){
 <script type="text/javascript">
     // 事件代理方式进行绑定mouseenter/mouseover的区别：
     // mouseover和mouseout,如果鼠标移动到子元素上，即便没有离开父元素，也会触发父元素的mouseout事件，mouseenter/mouseleave，如果鼠标没有离开父元素，在子元素上任意移动，也不会触发mouseleave事件
-    $(document).ready(function(){
-        var sub = $("#sub");
-        var activeRow;//当前激活的一级菜单行
-        var activeMenu;//对应的二级菜单
-        var timer;//计时器
-        var mouseInSub = false;//鼠标是否在子菜单
+    $(document).ready(function () {
+    var sub = $('#sub')  //二级菜单的父div
 
-        sub.on('mouseenter',function(e){
-            mouseInSub = true;
-        }).on('mouseleave',function(e){
-            mouseInSub = false;
+    var activeRow
+    var activeMenu
+
+    //优化
+    var timer
+    var mouseInSub = false
+
+    var mouseTrack=[]
+
+    var moveHandler=function(e){
+        mouseTrack.push({
+            x:e.pageX,
+            y:e.pageY
         })
 
-        var mouseTrack = [];
-        var moveHandler = function(e){
-            mouseTrack.push({
-                x:e.pageX,
-                y:e.pageY
-            })
-            if (mouseTrack.length>3) {
-                mouseTrack.shift()
-            }
+        if(mouseTrack.length>3){
+            mouseTrack.shift()
         }
-        $('#test')
-            .on('mouseenter',function(e){
-                sub.removeClass('none');//二级菜单显示
-                $(document).on('mousemove',moveHandler)
-            })
-            .on('mouseleave',function(e){
-                sub.addClass('none');//二级菜单隐藏
-                // console.log(activeRow)
-                if (activeRow) {
-                    activeRow.removeClass('active');
-                    activeRow = null;
-                }
-                if(activeMenu){
-                    activeMenu.addClass('none');
-                    activeMenu = null;
-                }
-                $(document).unbind('mousemove',moveHandler)//解绑mousemove
-            })
-            .on('mouseenter','li',function(e){//事件代理方式绑定
+    }
 
-                if (!activeRow) {
-                    activeRow = $(e.target).addClass('active');
-                    activeMenu = $('#'+activeRow.data('id'));
-                    activeMenu.removeClass('none');
-                    return
-                }
-                // 加入延迟优化
-            // 切换子菜单的时候，用setTimeout设置延迟。（但是不能迅速切换）
-            // debounce去抖技术，在事件频繁触发时，只执行一次处理，最后一次(计时器还没执行的时候，清除计时器，并在计时器设置空)
-                if (timer) {
-                    clearTimeout(timer)
-                }
-
-                var currMousePos = mouseTrack[mouseTrack.length - 1]
-                var leftCorner = mouseTrack[mouseTrack.length - 2]
-
-                var delay = needDelay(sub,leftCorner,currMousePos)
-                if (delay) {
-                    timer = setTimeout(function(){
-                        if (mouseInSub) {
-                            return
-                        }
-                        //li之间切换，清除之前状态
-                        activeRow.removeClass('active');
-                        activeMenu.addClass('none');
-                        // 指向当前li
-                        activeRow = $(e.target)
-                        activeRow.addClass('active')
-                        activeMenu = $('#'+activeRow.data('id'));
-                        activeMenu.removeClass('none')
-                        timer = null;
-                    },300)
-                }else{
-                    var prevActiveRow = activeRow;
-                    var prevActiveMenu = activeMenu;
-                    activeRow = $(e.target)
-                    activeMenu = $('#'+activeRow.data('id'));
-
-                    prevActiveRow.removeClass('active')
-                    prevActiveMenu.addClass('none')
-
-                    activeRow.addClass('active')
-                    activeMenu.removeClass('none')
-                }
-
-
-            })
-            // 基于用户行为预测的切换技术
-            // 跟踪鼠标的移动
-            // 用鼠标当前位置，和鼠标上一次位置与子菜单上下边缘形成的三角形区域进行比较
+    sub.on('mouseenter', function (e) {
+        //当鼠标放在二级菜单上是，标志位设为true
+        mouseInSub = true
+    }).on('mouseleave', function (e) {
+        //同上离开时设置为false
+        mouseInSub = false
+    })
+    //id test为整个一二级菜单的父容器div
+        $('.wrap').on('mouseleave', function (e) {
+        //离开菜单后，二级菜单隐藏
+            sub.addClass('none')
+            if (activeRow) {
+                activeRow.removeClass('active')
+                activeRow = null
+            }
+            if (activeMenu) {
+                activeMenu.addClass('none')
+                activeMenu = null
+            }
+        //移除鼠标在菜单里移动时的回调事件
+        $(document).unbind('mousemove',moveHandler)
 
     })
+
+    $('.wrap') //鼠标进入菜单时，注册鼠标移动时的回调事件
+        .on('mouseenter',function(e){
+            $(document).bind('mousemove',moveHandler)
+            /*console.log('mouse enter bind handler')*/
+        })
+
+    $('#test li').on('mouseenter',function (e) {
+            sub.removeClass('none')
+            if (!activeRow) {
+                activeRow = $(e.target).addClass('active')
+                activeMenu = $('#' + activeRow.data('id'))
+                activeMenu.removeClass('none')
+                return
+            }
+
+            if (timer) {
+                clearTimeout(timer)
+            }
+
+            //当前鼠标的坐标
+            var currMousePos =mouseTrack[mouseTrack.length-1]
+            //上次鼠标的坐标
+            var leftCorner=mouseTrack[mouseTrack.length-2]
+
+            //根据上次鼠标和二级菜单的左上下顶点所构成的三角形判断是否需要延迟
+            //如果当前鼠标的位置在三角形之内，那么需要延迟，否则无需延迟
+            var delay=needDelay(sub,leftCorner,currMousePos)
+
+            if(delay){
+                timer = setTimeout(function () {
+
+                    if (mouseInSub) {
+                        console.log("----")
+                        return
+                    }
+
+                    activeRow.removeClass('active')
+                    activeMenu.addClass('none')
+
+                    activeRow = $(e.target)
+                    activeRow.addClass('active')
+                    activeMenu = $('#' + activeRow.data('id'))
+                    activeMenu.removeClass('none')
+                    timer = null
+                }, 500)
+            }else{
+                var prevActiveRow=activeRow
+                var prevActiveMenu=activeMenu
+
+                activeRow=$(e.target)
+                activeMenu=$('#'+activeRow.data('id'))
+
+                prevActiveMenu.addClass('none')
+                prevActiveRow.removeClass('active')
+
+                activeRow.addClass('active')
+                activeMenu.removeClass('none')
+            }
+        })
+})
 </script>
 
     {% block content %}{% endblock %}

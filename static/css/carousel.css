@@ -42,7 +42,8 @@ body {
 .navbar-wrapper .navbar .container {
   width: auto;
 }
-
+.navbar-brand{color:#1c1f21 !important;}
+.navbar-brand:hover{color:#d2772f !important;}
 
 /* CUSTOMIZE THE CAROUSEL
 -------------------------------------------------- */
@@ -166,7 +167,7 @@ body {
 }
 
 .wrap{
-        position: relative;width: 216px;float:left;height:430px;padding-top:15px;background: #6c6669;color: #ffffff;
+        position: relative;width: 216px;float:left;height:430px;padding-top:15px;background: #2b333b;color: #ffffff;
   border-bottom-left-radius:10px;
   border-top-left-radius:10px;
     }
