@@ -4,3 +4,6 @@ from django.shortcuts import render
 
 def mainmoc(request):
     return render(request,"moc/main.html")
+
+def dashbd(request):
+    return render(request,"moc/dashboard.html")
