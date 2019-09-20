@@ -1,5 +1,5 @@
 {% extends 'mocbase.html' %}
-{% load staticfiles %}
+{% load static %}
 {% block content %}
     <section class="content">
     <div class="row">
@@ -49,7 +49,7 @@
                 </div>
                   <!-- ./col -->
                 <div class="col-xs-6 col-md-2 text-center">
-                  <input type="text" class="knob" value="{{ un_rate }}" data-width="90" data-height="90" data-fgColor="#cccccc" data-readonly="true">
+                  <input type="text" class="nock" value="45" data-width="90" data-height="90" data-fgColor="#cccccc" data-readonly="true">
 
                   <div class="knob-label">未知</div>
                 </div>
@@ -108,6 +108,9 @@
           <!-- /.box -->
         </div>
         <!-- /.col (RIGHT) -->
+        <div class="col-md-6">
+            <div id="linechart" style="width:600px;height:400px;"></div>
+        </div>
       </div>
       <!-- /.row -->
 
@@ -120,6 +123,39 @@
     <!-- page script -->
 
     <script type="text/javascript">
+    $(function(){
+        echarts.init(document.getElementById('linechart')).setOption({
+    title: {text: 'Line Chart'},
+    tooltip: {},
+    toolbox: {
+        feature: {
+            dataView: {},
+            saveAsImage: {
+                pixelRatio: 2
+            },
+            restore: {},
+            dataZoom:{}
+        }
+    },
+    xAxis: {},
+    yAxis: {},
+    series: [{
+        type: 'line',
+        smooth: true,
+        data: [[12, 5], [24, 20], [36, 36], [48, 10], [60, 10], [72, 20]]
+    }]
+});
+    });
+
+    $(function(){
+        $(".nock").knob({
+            max: 940,
+            min: 10,
+            thickness: .3,
+            fgColor: '#2B49E0',
+            bgColor: '#F03030',
+        });
+    });
 
     // 顶部服务器状态百分率圆图
     $(function () {
@@ -197,7 +233,7 @@
                 text: '数量'
             },
             tooltip: {},
-            legend: { data:['']
+            legend: { data:['数量']
             },
             xAxis: {
                 data: ["在线", "下线","故障","备用","未知"] },
@@ -208,7 +244,7 @@
                 name: '数量',
                 type: 'bar',
                 barWidth: '50%',
-                data: [{{ upline }}, {{ offline }}, {{ breakdown }}, {{ backup }}, {{ unknown }}]
+                data: [10, 5, 3, 3, 2]
             }]
         };
             // 使用刚指定的配置项和数据显示图表。
@@ -227,7 +263,9 @@
             },
             tooltip : {
                 trigger: 'item',
-                formatter: "{a} <br/>{b} : {c} ({d}%)"
+                formatter: function (params) {  /*另一种写法"{a} <br/>{b} : {c} ({d}%)"*/
+                    return '<p>'+params.seriesName+':'+params.data.name+':'+params.percent+'%</p>'
+                },
             },
             legend: {
                 orient: 'vertical',
