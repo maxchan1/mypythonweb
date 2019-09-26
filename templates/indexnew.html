@@ -11,7 +11,7 @@
 </head>
 <body>
 <div class="login">
-	<h2>自动化管理系统</h2>
+	<h2>{% if 'admin' in curapp %}管理员{% else %}普通用户{% endif %}自动化管理系统</h2>
 	<div class="login-top">
 		<h1>登录账号</h1>
 		<form action="/login/" method="post">
@@ -28,7 +28,14 @@
 	<div class="login-bottom">
 		<h3>新用户 &nbsp;<a href="#">注册</a></h3>
 	</div>
+</div>
 
+<div class="justform">
+    <form action="#" method="post">
+        {% csrf_token %}
+        {{ lform }}
+        <input type="submit" value="确认" />
+    </form>
 </div>
 <script>
     function clearinfo(){

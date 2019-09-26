@@ -21,7 +21,8 @@ from django.conf.urls import url
 urlpatterns = [
     re_path(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     path('admin/', admin.site.urls),
-    path('comdb/',include(("comdb.urls"))),
+    path('comdb/',include("comdb.urls",namespace='adminpull')),
+    path('comdb2/',include('comdb.urls',namespace="normaluser")),
     url(r'^index/', views.index),
     url(r'^login/', views.login),
     url(r'^register/', views.register),

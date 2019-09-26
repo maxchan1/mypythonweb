@@ -1,14 +1,45 @@
 from django.shortcuts import render,redirect
-from django.shortcuts import HttpResponse
+from django.http import HttpResponse
 from comdb.models import userinfo
 from django.contrib.auth import authenticate,login
 from django.views import generic
 from .models import userinfo
+from django.urls import reverse
+from .forms import uploadfileform
+import csv
+from django.http import StreamingHttpResponse
+from django.template import loader,Context
 
 # Create your views here.
-
+class Echo(object):
+    def write(self, value):
+        return value
 def index(request):
-    return render(request, "indexnew.html")
+    '''lform = uploadfileform()
+    return render(request, "indexnew.html",{'lform':lform})'''
+    '''rows = (["Row {}".format(idx), str(idx)] for idx in range(65536))
+    pseudo_buffer = Echo()
+    writer = csv.writer(pseudo_buffer)
+    response = StreamingHttpResponse((writer.writerow(row) for row in rows),
+                                     content_type="text/csv")
+    response['Content-Disposition'] = 'attachment; filename="somefilename.csv"'
+    return response'''
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="somefilename.csv"'
+
+    # The data is hard-coded here, but you could load it from a database or
+    # some other source.
+    csv_data = (
+        ('First row', 'Foo', 'Bar', 'Baz'),
+        ('Second row', 'A', 'B', '"Testing"', "Here's a quote"),
+    )
+
+    t = loader.get_template('comdb/my_template_name.txt')
+    c = {
+        'data': csv_data
+    }
+    response.write(t.render(c))
+    return response
 
 def mylogin(request):
     if request.method == "POST":
