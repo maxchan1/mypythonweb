@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from comdb.models import userinfo
 from django.contrib.auth import authenticate,login
 from django.views import generic
-from .models import userinfo
+from .models import userinfo,FileForm
 from django.urls import reverse
 from .forms import uploadfileform
 import csv
@@ -15,15 +15,13 @@ class Echo(object):
     def write(self, value):
         return value
 def index(request):
-    '''lform = uploadfileform()
-    return render(request, "indexnew.html",{'lform':lform})'''
     '''rows = (["Row {}".format(idx), str(idx)] for idx in range(65536))
     pseudo_buffer = Echo()
     writer = csv.writer(pseudo_buffer)
     response = StreamingHttpResponse((writer.writerow(row) for row in rows),
                                      content_type="text/csv")
     response['Content-Disposition'] = 'attachment; filename="somefilename.csv"'
-    return response'''
+    return response
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="somefilename.csv"'
 
@@ -39,7 +37,16 @@ def index(request):
         'data': csv_data
     }
     response.write(t.render(c))
-    return response
+    return response'''
+    if request.method == 'POST':
+        mdform = FileForm(request.method,request.FILES)
+        if mdform.is_valid():
+            mdform.save()
+            return render(request,'indexnew.html',locals())
+    else:
+        lform = uploadfileform()
+        mdform = FileForm()
+    return render(request, "indexnew.html",locals())
 
 def mylogin(request):
     if request.method == "POST":

@@ -1,8 +1,17 @@
 from django.db import models
 import datetime
 from django.utils import timezone
+from django.forms import ModelForm
 
 # Create your models here.
+class ModelFile(models.Model):
+    upload = models.FileField(upload_to='uploads/')
+
+class FileForm(ModelForm):
+    class Meta:
+        model = ModelFile
+        fields = ['upload']
+
 class userinfo(models.Model):
     #如果没有models.AutoField，默认会创建一个id的自增列
     name = models.CharField(max_length=30)
