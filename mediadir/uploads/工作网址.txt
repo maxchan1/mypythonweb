@@ -1,0 +1,82 @@
+https://github.com/SeleniumHQ/selenium/wiki/DesiredCapabilities
+https://www.cnblogs.com/LiCheng-/p/6920900.html
+http://www.tcmap.com.cn/tianjin/
+http://www.liujiangblog.com/course/django/91
+
+http://192.168.10.221:8686/sim-bank.html	模拟银行
+
+服务启动密码：Bosspj@2017
+
+http://172.18.169.22:7001/finance-web/main.do	非税收入电子收缴
+用户名：qhs001
+密码：1
+
+
+http://120.35.0.66:19995	OA系统
+用户名：59134
+密码：cmx123456
+
+192.168.10.58:1521/orcl	自动化oracle
+base0928/bs
+
+汇总项配置、票据模板、身份证号转码、
+
+基础设置：区划管理-票据种类维护-归口财政部门维护-主管部门维护-单位维护（需要挂接可用票据和单位印章）-单位领购证-单位控制信息-票据仓库-印制企业；
+政策及项目：预算科目维护-收入类别维护-收入项目维护-项目审核-收费标准维护-收费标准审核-全国项目对照-单位项目挂接-单位项目挂接审核；
+收缴管理：账号维护-账号审核-国库账户维护-国库账户审核-缴款书收款账号设置-缴款书收款账号设置审核-科目账户维护-科目账户审核-征收机关设置（缴库管理）-汇总项设置（清分设置）
+票据管理：票据入库-票据出库
+
+票号管理方式为财政发放，必须出库流程才能使用号段
+
+收缴方式:【直接缴库】说明是直接开具缴款通知书去缴款；
+【汇缴缴库】是说开具电子票 机打票进行生成汇缴缴款书去缴款
+
+根据项目资金性质判断是缴入国库账户还是专户账户
+
+项目资金是纳入预算管理下，缴入国库账户
+项目资金是财政专户管理资金，缴入财政专户
+项目资金是代收资金、代管资金、其他，缴入单位账户
+
+缴款人拿着缴款书去工商银行缴款（专户资金），在后续资金进行清分分解的时候，会判断工商银行是否为【默认清分户】，如果是，则缴入工商银行的财政专户；如果为否，则缴入【跨行接收户】银行
+
+空库自动化：区划新增，用户增加，数据权限定义，数据组设置，部门添加，单位和项目分类，账户新增
+
+
+cd /opt/bssoft/
+cd zookeeper-3.4.6/bin/
+ ./zkServer.sh start
+cd ../../redis-3.2.9/bin/
+nohup ./redis-server &
+./redis-cli
+ auth redis
+config set requirepass redis
+config get requirepass
+auth redis
+config get requirepass
+exit
+cd /opt/Oracle/Middleware/user_projects/domains/base_domain/
+rm -rf *.log
+nohup ./startWebLogic.sh >test1023.log &
+ps -ef|grep java
+cd /opt/ntbank/ntpay-produce-front/bin
+nohup ./start>front.log &
+cd /opt/ntbank/tomcat-ntpay-web/bin
+./startup.sh
+ps -ef|grep java
+
+
+我们数据库直接改39，通过调度【补写非税收入】就能形成国库收入了
+select a.fstatus,a.fsenddate,a.fenterstatus,a.fenterdate,a.freconcilestatus,a.freconciledate,a.*,a.rowid from FNE_Treasury_Transfer_Msg a;
+更改完字段然后通过调度在表fne_income_daybook生成数据
+
+oracle数据库还原echo
+impdp base0928/bs directory=DATA_PUMP_DIR dumpfile=base0928-1008.dmp remap_schema=base0928:base0928 schemas=base0928 table_exists_action=replace
+
+强制退出机制
+特殊控件操作
+
+本周工作：
+完成3040单位端界面脚本
+国库收入流水和代收收入流水接口
+下周计划：
+完成专户收入流水

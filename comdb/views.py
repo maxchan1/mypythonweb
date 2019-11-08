@@ -1,9 +1,9 @@
 from django.shortcuts import render,redirect
-from django.http import HttpResponse
+from django.http import HttpResponse,JsonResponse
 from comdb.models import userinfo
 from django.contrib.auth import authenticate,login
 from django.views import generic
-from .models import userinfo,FileForm
+from .models import userinfo,FileForm,Comment
 from django.urls import reverse
 from .forms import uploadfileform
 import csv
@@ -11,6 +11,24 @@ from django.http import StreamingHttpResponse
 from django.template import loader,Context
 
 # Create your views here.
+'''def cmtview(request):
+    if request.is_ajax():
+        content = request.POST.get('content',None)
+        if content:'''
+#https://www.cnblogs.com/yb635238477/p/9508458.html
+def comment(request):
+    res = {'code':1}
+    if request.method == 'POST':
+        res = {'code':0}
+        title = request.POST.get('title')
+        content = request.POST.get('content')
+        comment_obj = Comment.objects.create(title=title, content=content)
+        res['data'] = {'title':comment_obj.title,
+                       'content':comment_obj.content,
+                       'ctime':comment_obj.ctime.strftime('%Y-%m-%d %H:%M')}
+    return JsonResponse(res,safe=False)
+
+
 class Echo(object):
     def write(self, value):
         return value
@@ -39,13 +57,14 @@ def index(request):
     response.write(t.render(c))
     return response'''
     if request.method == 'POST':
-        mdform = FileForm(request.method,request.FILES)
+        mdform = FileForm(request.POST,request.FILES)
         if mdform.is_valid():
             mdform.save()
             return render(request,'indexnew.html',locals())
     else:
         lform = uploadfileform()
         mdform = FileForm()
+        comment_list = Comment.objects.all()
     return render(request, "indexnew.html",locals())
 
 def mylogin(request):

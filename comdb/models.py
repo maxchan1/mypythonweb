@@ -1,16 +1,31 @@
 from django.db import models
-import datetime
+import datetime,uuid
 from django.utils import timezone
 from django.forms import ModelForm
 
 # Create your models here.
+class Comment(models.Model):
+    title = models.CharField(verbose_name='评论标题',max_length=50)
+    content = models.TextField(max_length=10)
+    parent_cmt = models.ForeignKey('self',on_delete=models.CASCADE,blank=True,null=True)
+    ctime = models.DateTimeField(auto_now=True)
+
+class CmForm(ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['title','content']
+
 class ModelFile(models.Model):
-    upload = models.FileField(upload_to='uploads/')
+    upload = models.FileField(verbose_name='上传文件',upload_to='uploads/')
+    imagefd = models.ImageField(upload_to='upimages/')
+    uuid = models.UUIDField(default=uuid.uuid4(),editable=False)
+    pathfiles = models.FilePathField(path='F:\\工作文档')
+    text = models.CharField(max_length=32)
 
 class FileForm(ModelForm):
     class Meta:
         model = ModelFile
-        fields = ['upload']
+        fields = ['upload','imagefd','pathfiles','text']
 
 class userinfo(models.Model):
     #如果没有models.AutoField，默认会创建一个id的自增列

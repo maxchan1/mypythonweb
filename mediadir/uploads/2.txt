@@ -1,0 +1,43 @@
+   xpath_policy = "//span[text()='政策及项目']/.."
+    xpath_income = "//a[text()='收入项目']"
+    xpath_projectsupport = "//a[text()='项目维护' and @data-code='0102002001']"
+    xpath_projecttab = "//a[@class='active menuTab' and text()='项目维护 ']"
+    #id_switch = "ztree79_7_switch"
+    xpath_selected = "//a[@class='level1 curSelectedNode']"
+    xpath_pop = "//span[@id='dlg-head-action' and text()='新增']"
+    xpath_ztreespan = "//span[text()='888 测试项目']"
+    xpath_add = "//div[@id='itemBtnArea']/a[@id='add']"
+    xpath_code = "//div[@forform='form']//input[@id='fitemCode']"    #项目编码
+    xpath_name = "//div[@forform='form']//input[@id='fitemName']"   #项目名称
+    xpath_CONCHOICE = "//span[text()='']"
+    xpath_for = "//input[@id='fsortCode']/following-sibling::input[1]" #项目用途
+    xpath_SWITCH = "//a[@title='' and @class='level0']/preceding-sibling::span[1]"    #分支
+    xpath_startdate = "//input[@id='fitemEffDate']/following-sibling::input[1]" #项目生效日期
+    xpath_enddate = "//input[@id='fitemExpDate']/following-sibling::input[1]"    #项目失效日期
+    xpath_CONCHOICE2 = "//li[text()='']"
+    xpath_level = "//input[@id='fbgtLvlCode']/following-sibling::input[1]"    #项目使用次级
+    xpath_leveltype = "//label[@id='label_fbgtLvlCode' and text()='项目使用级次']"
+    xpath_switch2 = "//a[@title='23 黑龙江省']/preceding-sibling::span[2]"  #区划分支
+    xpath_area = "//input[@id='fsubRgnId']/following-sibling::input[1]"    #项目使用区划
+    xpath_SWITCH1 = "//a[@title='']/preceding-sibling::span[1]"
+    xpath_type = "//input[@id='fincomeSortCode']/following-sibling::input[1]"    #收入类别
+    xpath_texttype = "//label[@id='label_fincomeSortCode' and text()='收入类别']"
+    xpath_property = "//input[@id='ffundsNatureCode']/following-sibling::input[1]"  #资金性质
+    xpath_approveattrib = "//input[@id='fappCode']/following-sibling::input[1]"  # 审批属性
+    xpath_budgetsubject = "//input[@id='fsubId']/following-sibling::input[1]"  # 预算科目
+    id_confirm = "ok"
+    xpath_SWITCH2 = "//a[@title='预算科目树']/following-sibling::ul[1]//a[@title='']/preceding-sibling::span[1]"
+    xpath_method = "//input[@id='fpayModeCode']/following-sibling::input[1]"  # 收缴方式
+    xpath_measurement = "//div[@forform='form']//input[@id='funits']"  # 计量单位
+    xpath_remark = "//div[@forform='form']//input[@id='fmemo']"  # 备注
+    xpath_paychannel = "//span[@id='column_lable_cb']/input"
+    xpath_save = "//a[@id='saveAdd']"
+    xpath_sort = "//div[@id='topGrid']//select[@role='listbox']"
+    xpath_num = "//div[@id='topGrid']//option[text()='15']"
+
+    xpath_CONSTANT1 = "//td[text()='']"
+    xpath_change = "//tr[contains(@class,'ui-state-highlight')]//i[@class='btn-edit']"
+    xpath_delete = "//tr[contains(@class,'ui-state-highlight')]//a[@id='btnDelete']"
+    xpath_confirm = "//a[text()='确定']"
+
+    class_info = "alertContent"

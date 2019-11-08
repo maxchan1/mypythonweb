@@ -73,7 +73,7 @@ def register(request):
                 new_user = models.User.objects.create(name=username,password=hash_code(password1),email=email,sex=sex)
                 code = make_confirm_string(new_user)
                 send_mail(email, code)
-                return redirect('/login/')
+                return redirect('login/')
         return render(request, 'login/register.html', locals())
     register_form = RegisterForm()
     return render(request, 'login/register.html',locals())

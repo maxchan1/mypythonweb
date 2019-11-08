@@ -1,15 +1,6 @@
+{% extends 'base.html' %}
 {% include 'toto.html' with gg='这是什么鬼' %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>网页新页</title>
-<link href="../static/css/style.css" rel="stylesheet" type="text/css" media="all"/>
-<!-- Custom Theme files -->
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-</head>
+{% block content %}
 <body>
 <div class="login">
 	<h2>{% if 'admin' in curapp %}管理员{% else %}普通用户{% endif %}自动化管理系统</h2>
@@ -45,11 +36,86 @@
         <input type="submit" value="确认" />
     </form>
 </div>
+
+<h4>评论</h4>
+    <div class="list-group comment-list">
+        {% for comment in comment_list %}
+            <div href="#" class="list-group-item" my_id="{{ comment.id }}">
+                <h4 class="list-group-item-heading comment-header">
+                    <span>#{{ forloop.counter }}楼</span>
+                    <span>{{ comment.ctime|date:'Y-m-d H:i' }}</span>
+                    <span>{{ comment.title }}</span>
+                    <button class="pull-right replay btn-primary">回复</button>
+                </h4>
+                <p class="list-group-item-text">{{ comment.content }}</p>
+            </div>
+        {% endfor %}
+    </div>
+
+<h4>发表评论</h4>
+    <div>标题：
+        <input type="text" value="" id="title">
+    </div>
+    <div>
+        <p>评论内容：</p>
+        <textarea cols="60" rows="10" id="new-comment"></textarea>
+    </div>
+    <div>
+        <button class="btn btn-success" id="submit-comment">提交</button>
+    </div>
+{% endblock %}
+{% block script %}
 <script>
     function clearinfo(){
         document.getElementsByTagName("span")[0].innerHTML = "";
     }
 
+    $('#submit-comment').click(function () {
+        var title = $('#title').val();
+        var content = $('#new-comment').val();
+        $.ajax({
+            url: '/comdb/comment/',
+            type: 'post',
+            data: {
+                title: title,
+                content: content,
+                csrfmiddlewaretoken: $('[name="csrfmiddlewaretoken"]').val(),
+            },
+            success: function (res) {
+                console.log(res);
+                if (res.code === 0) {
+                    var data = res.data;
+                    //先计算原来.comment-list的后代有几个div，即有几个人评论，然后再加一
+                    var num = $('.comment-list>div').length + 1;
+                    //创建评论成功后，通过js在评论区列表在添加一条评论
+                    //反引号是ES6新增特性，${}可以引入变量
+                    var commenthtml = `<div href="#" class="list-group-item">
+                <h4 class="list-group-item-heading comment-header">
+                    <span>#${ num }楼</span>
+                    <span>${ data.ctime }</span>
+                    <span>${ data.title }</span>
+                    <span></span>
+                </h4>
+                    <p class="list-group-item-text">${ data.content }</p>
+                </div>`;
+                    //在原来的评论列表后面添加一条
+                    $('.comment-list').append(commenthtml);
+                    //情空 textarea
+                    $('#new-comment').val('');
+                    $('#title').val('');
+                }
+            }
+        });
+    });
+
+    $('.comment-list').on('click','.replay',function () {
+        //光标聚焦在textarea
+        //出现@xxx
+        var replayname = $(this).prev().text() ;//取到当前标签的前一个标签的文本
+        $('#new-comment').focus().val('@'+replayname+'\n');
+        //把当前评论的id值，存到提交的按钮中
+        var pID = $(this).parent().parent().attr('my-id');
+        $('#submit-comment').data('pid',pID)
+    });
 </script>
-</body>
-</html>
+{% endblock %}
