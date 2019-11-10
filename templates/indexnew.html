@@ -45,7 +45,7 @@
                     <span>#{{ forloop.counter }}楼</span>
                     <span>{{ comment.ctime|date:'Y-m-d H:i' }}</span>
                     <span>{{ comment.title }}</span>
-                    <button class="pull-right replay btn-primary">回复</button>
+                    <button class="pull-right replay btn btn-primary">回复</button>
                 </h4>
                 <p class="list-group-item-text">{{ comment.content }}</p>
             </div>
@@ -73,6 +73,7 @@
     $('#submit-comment').click(function () {
         var title = $('#title').val();
         var content = $('#new-comment').val();
+        var parentid = $(this).data('pid') || '';
         $.ajax({
             url: '/comdb/comment/',
             type: 'post',
@@ -80,6 +81,7 @@
                 title: title,
                 content: content,
                 csrfmiddlewaretoken: $('[name="csrfmiddlewaretoken"]').val(),
+                parentid:parentid,
             },
             success: function (res) {
                 console.log(res);
@@ -89,12 +91,12 @@
                     var num = $('.comment-list>div').length + 1;
                     //创建评论成功后，通过js在评论区列表在添加一条评论
                     //反引号是ES6新增特性，${}可以引入变量
-                    var commenthtml = `<div href="#" class="list-group-item">
+                    var commenthtml = `<div href="#" class="list-group-item" my_id="${data.id}">
                 <h4 class="list-group-item-heading comment-header">
                     <span>#${ num }楼</span>
                     <span>${ data.ctime }</span>
                     <span>${ data.title }</span>
-                    <span></span>
+                    <button class="pull-right replay btn btn-primary">回复</button>
                 </h4>
                     <p class="list-group-item-text">${ data.content }</p>
                 </div>`;
@@ -103,6 +105,7 @@
                     //情空 textarea
                     $('#new-comment').val('');
                     $('#title').val('');
+                    $('#submit-comment').removeData('pid');
                 }
             }
         });
@@ -111,10 +114,11 @@
     $('.comment-list').on('click','.replay',function () {
         //光标聚焦在textarea
         //出现@xxx
-        var replayname = $(this).prev().text() ;//取到当前标签的前一个标签的文本
-        $('#new-comment').focus().val('@'+replayname+'\n');
+        //var replayname = $(this).prev().text() ;//取到当前标签的前一个标签的文本
+        //$('#new-comment').focus().val('@'+replayname+'\n');
+        $('#new-comment').focus().val('');
         //把当前评论的id值，存到提交的按钮中
-        var pID = $(this).parent().parent().attr('my-id');
+        var pID = $(this).parent().parent().attr('my_id');
         $('#submit-comment').data('pid',pID)
     });
 </script>

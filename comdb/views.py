@@ -22,8 +22,15 @@ def comment(request):
         res = {'code':0}
         title = request.POST.get('title')
         content = request.POST.get('content')
-        comment_obj = Comment.objects.create(title=title, content=content)
-        res['data'] = {'title':comment_obj.title,
+        parentid = request.POST.get('parentid')
+        print('parentid是这个',parentid)
+        if parentid:
+            comment_obj = Comment.objects.create(title=title, content=content,parent_cmt_id=parentid)
+        else:
+            comment_obj = Comment.objects.create(title=title, content=content)
+        print('id只是甚多',comment_obj.id)
+        res['data'] = {'id':comment_obj.id,
+                        'title':comment_obj.title,
                        'content':comment_obj.content,
                        'ctime':comment_obj.ctime.strftime('%Y-%m-%d %H:%M')}
     return JsonResponse(res,safe=False)
