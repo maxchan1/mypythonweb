@@ -10,11 +10,6 @@ class Comment(models.Model):
     parent_cmt = models.ForeignKey('self',on_delete=models.CASCADE,blank=True,null=True)
     ctime = models.DateTimeField(auto_now=True)
 
-class CmForm(ModelForm):
-    class Meta:
-        model = Comment
-        fields = ['title','content']
-
 class ModelFile(models.Model):
     upload = models.FileField(verbose_name='上传文件',upload_to='uploads/')
     imagefd = models.ImageField(upload_to='upimages/')
@@ -46,7 +41,7 @@ class question(models.Model):
     was_published_recently.short_description = 'Publish_Recent'
 
 class Choice(models.Model):
-    question = models.ForeignKey(question, on_delete=models.CASCADE)
+    question = models.ForeignKey(question, on_delete=models.CASCADE,related_name='aboutco')
     choice_text = models.CharField(max_length=200)
     votes = models.IntegerField(default=0)
 
