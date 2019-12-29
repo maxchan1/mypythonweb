@@ -150,9 +150,9 @@ CONFIRM_DAYS = 7
 
 CAPTCHA_OUTPUT_FORMAT = u'%(image)s %(text_field)s %(hidden_field)s'
 CAPTCHA_CHALLENGE_FUNCT = 'captcha.helpers.random_num_char_challenge'
-CAPTCHA_LENGTH = 3
-CAPTCHA_FOREGROUND_COLOR = '#001134'
-CAPTCHA_LETTER_ROTATION = (-35, 75) #图像倾斜幅度
+CAPTCHA_LENGTH = 5
+CAPTCHA_FOREGROUND_COLOR = '#000000'
+#CAPTCHA_LETTER_ROTATION = (-35, 75) #图像倾斜幅度
 
 MEDIA_ROOT = "mediadir"
 MEDIA_URL = "/media/"

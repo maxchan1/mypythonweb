@@ -1,9 +1,10 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,HttpResponse
 from . import models
 from login.forms import UserForm,RegisterForm
-import hashlib,datetime
+import hashlib,datetime,json
 from django.conf import  settings
-
+from captcha.models import CaptchaStore
+from captcha.helpers import  captcha_image_url
 # Create your views here.
 
 def hash_code(s,salt='controldown'):
@@ -17,6 +18,14 @@ def index(request):
     pass
     return render(request, 'login/index.html')
 
+def captcha():
+    hashkey = CaptchaStore.generate_key()   #验证码答案
+    image_url = captcha_image_url(hashkey)  #验证码地址
+    captcha = {'hashkey': hashkey, 'image_url': image_url}
+    return captcha
+
+def refresh_captcha(request):
+    return HttpResponse(json.dumps(captcha()), content_type='application/json')
 
 def login(request):
     if request.session.get('is_login',None):

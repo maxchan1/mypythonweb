@@ -11,11 +11,21 @@ class Comment(models.Model):
     ctime = models.DateTimeField(auto_now=True)
 
 class ModelFile(models.Model):
+    FRESHMAN = 'FR'
+    SOPHOMORE = 'SO'
+    JUNIOR = 'JR'
+    SENIOR = 'SR'
+    YEAR_IN_SCHOOL_CHOICES = (
+        (FRESHMAN, 'Freshman'),
+        (SOPHOMORE, 'Sophomore'),
+        (JUNIOR, 'Junior'),
+        (SENIOR, 'Senior'),
+    )
     upload = models.FileField(verbose_name='上传文件',upload_to='uploads/')
     imagefd = models.ImageField(upload_to='upimages/')
     uuid = models.UUIDField(default=uuid.uuid4(),editable=False)
-    pathfiles = models.FilePathField(path='F:\\工作文档')
-    text = models.CharField(max_length=32)
+    pathfiles = models.FilePathField(path='D:\\workdocument')
+    text = models.CharField(max_length=32,choices=YEAR_IN_SCHOOL_CHOICES)
 
 class FileForm(ModelForm):
     class Meta:
@@ -41,7 +51,7 @@ class question(models.Model):
     was_published_recently.short_description = 'Publish_Recent'
 
 class Choice(models.Model):
-    question = models.ForeignKey(question, on_delete=models.CASCADE,related_name='aboutco')
+    question = models.ForeignKey(question, on_delete=models.CASCADE,related_name="aboutco",related_query_name="hell")
     choice_text = models.CharField(max_length=200)
     votes = models.IntegerField(default=0)
 

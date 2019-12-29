@@ -24,6 +24,7 @@ urlpatterns = [
     path('comdb/',include("comdb.urls",namespace='adminpull')),
     path('comdb2/',include('comdb.urls',namespace="normaluser")),
     url(r'^index/', views.index),
+    re_path('refresh_captcha/$',views.refresh_captcha),
     url(r'^login/', views.login),
     url(r'^register/', views.register),
     url(r'^logout/', views.logout),

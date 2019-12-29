@@ -84,6 +84,7 @@ def mylogin(request):
             return render(request,"post.html")
         else:
             return render(request, "indexnew.html", {"loginfo": "用户名或密码错误"})
+    return HttpResponse("错误路径！")
 
 def testdb(request):
     '''test1 = userinfo(name="mike",email="43533@163.com",addr="下胡同城北村")
